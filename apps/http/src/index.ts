@@ -1,4 +1,3 @@
-
 import { prismaClient } from "@repo/db/client";
 import express from "express";
 import { urlSchema } from "@repo/common/type";
@@ -9,7 +8,7 @@ dotenv.config({path:"../.env"})
 const app = express();
 app.use(cors())
 app.use(express.json());
-const baseUrl = "http://localhost:3002/";
+const baseUrl =process.env.BACKEND_URL
 app.post("/url", async (req, res) => {
     try {
         const urlPayLoad = urlSchema.safeParse(req.body);
@@ -26,9 +25,11 @@ app.post("/url", async (req, res) => {
        })
        if(matchLongUrl){
         return res.status(211).json({
-            shortUrl:matchLongUrl.shortUrl
+            shortUrl:baseUrl+matchLongUrl.shortUrl,
+            message:"Done"
         })
-       } 
+       }
+        
         const response = await prismaClient.url.create({
             data: {
                 longUrl: urlPayLoad.data.longUrl,

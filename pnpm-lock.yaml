@@ -97,6 +97,9 @@ importers:
       axios:
         specifier: ^1.17.0
         version: 1.17.0
+      dotenv:
+        specifier: ^17.4.2
+        version: 17.4.2
       next:
         specifier: 16.2.0
         version: 16.2.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)

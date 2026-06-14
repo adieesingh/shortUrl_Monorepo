@@ -1,26 +1,29 @@
-"use client"
-import axios from "axios"
+"use client";
+import axios from "axios";
 import { useState } from "react";
+
+
+
+
 export default function Home() {
-  const [longUrlLink,setLongUrl]=useState("")
-  const[short,setShortUrl]=useState("")
-  const handleUrl=async()=>{
+  const [longUrlLink, setLongUrl] = useState("");
+  const [short, setShortUrl] = useState("");
+
+  const handleUrl = async () => {
     try {
-      const response=await axios.post("http://localhost:3002/url",{
-    longUrl:longUrlLink
-    })
-    if(response){
-       setShortUrl(response.data.shortUrl)
-    }
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/url`, {
+        longUrl: longUrlLink,
+      });
+      if (response) {
+        setShortUrl(response.data.shortUrl);
+      }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-   
-  }
+  };
   return (
     <div className="min-h-screen bg-linear-to-br from-indigo-900 via-slate-900 to-black flex items-center justify-center px-4">
       <div className="w-full max-w-2xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl">
-        
         <h1 className="text-4xl font-bold text-white text-center mb-2">
           URL Shortener
         </h1>
@@ -34,12 +37,14 @@ export default function Home() {
             type="url"
             placeholder="Paste your long URL here..."
             className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-           onChange={(e)=>setLongUrl(e.target.value)} />
+            onChange={(e) => setLongUrl(e.target.value)}
+          />
 
           <button
-            type="submit"
+            type="button"
             className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition duration-200"
-           onClick={handleUrl}>
+            onClick={handleUrl}
+          >
             Generate Short URL
           </button>
         </form>
@@ -61,7 +66,6 @@ export default function Home() {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );
