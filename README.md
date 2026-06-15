@@ -1,159 +1,201 @@
-# Turborepo starter
+# shortUrl — URL Shortener Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+A full-stack URL shortener built as a **Turborepo monorepo**, with a Next.js frontend, an Express.js backend, and a shared PostgreSQL database layer via Prisma.
 
-## Using this example
+---
 
-Run the following command:
+## Features
 
-```sh
-npx create-turbo@latest
+- 🔗 Shorten any long URL to a 6-character nanoid slug
+- ♻️ Deduplication — the same long URL always returns the same short link
+- 🔀 Automatic redirect when visiting a short URL
+- 🗃️ PostgreSQL persistence via Prisma ORM
+- 🧱 Shared packages for DB client, validation schemas, and UI components
+- ⚡ Turborepo for fast, cached parallel builds
+
+---
+
+## Monorepo Structure
+
+```
+shortUrl_Monorepo/
+├── apps/
+│   ├── web/          # Next.js 16 frontend (React 19, Tailwind CSS v4)
+│   └── http/         # Express.js backend API
+└── packages/
+    ├── db/           # Prisma client + PostgreSQL schema (@repo/db)
+    ├── common/       # Shared Zod validation schemas (@repo/common)
+    ├── ui/           # Shared React component library (@repo/ui)
+    ├── eslint-config/       # Shared ESLint config (@repo/eslint-config)
+    └── typescript-config/   # Shared tsconfig bases (@repo/typescript-config)
 ```
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+## Tech Stack
 
-### Apps and Packages
+| Layer      | Technology                          |
+|------------|-------------------------------------|
+| Frontend   | Next.js 16, React 19, Tailwind CSS v4, Axios |
+| Backend    | Express.js 5, nanoid, CORS, dotenv  |
+| Database   | PostgreSQL, Prisma ORM (pg adapter) |
+| Validation | Zod                                 |
+| Monorepo   | Turborepo, pnpm workspaces          |
+| Language   | TypeScript (throughout)             |
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+---
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Prerequisites
 
-### Utilities
+- **Node.js** >= 18
+- **pnpm** 9.x — `npm install -g pnpm@9`
+- A running **PostgreSQL** instance
 
-This Turborepo has some additional tools already setup for you:
+---
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## Getting Started
 
-### Build
+### 1. Clone the repo
 
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+git clone https://github.com/adieesingh/shortUrl_Monorepo.git
+cd shortUrl_Monorepo
 ```
 
-Without global `turbo`, use your package manager:
+### 2. Install dependencies
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+```bash
+pnpm install
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### 3. Configure environment variables
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Create a `.env` file at the **root** of the monorepo:
 
-```sh
-turbo build --filter=docs
+```env
+# PostgreSQL connection string
+DATABASE_URL=postgresql://user:password@localhost:5432/shorturl
+
+# Base URL of the backend (used to construct short URLs)
+BACKEND_URL=http://localhost:3002/
+
+# Exposed to the Next.js frontend
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3002
 ```
 
-Without global `turbo`:
+### 4. Set up the database
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+```bash
+# Run Prisma migrations
+cd packages/db
+npx prisma migrate deploy
+
+# (Optional) Open Prisma Studio to inspect data
+npx prisma studio
 ```
 
-### Develop
+### 5. Build shared packages
 
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+```bash
+# From the repo root
+pnpm run build --filter=@repo/db --filter=@repo/common
 ```
 
-Without global `turbo`, use your package manager:
+### 6. Start development servers
 
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
+```bash
+# Runs both apps in parallel via Turborepo
+pnpm dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+| App     | URL                    |
+|---------|------------------------|
+| Web UI  | http://localhost:3000  |
+| API     | http://localhost:3002  |
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+---
 
-```sh
-turbo dev --filter=web
+## API Reference
+
+### `POST /url`
+
+Shorten a long URL.
+
+**Request body:**
+```json
+{ "longUrl": "https://example.com/some/very/long/path" }
 ```
 
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+**Response (200 — new URL created):**
+```json
+{ "shortUrl": "http://localhost:3002/abc123", "message": "Done" }
 ```
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
+**Response (211 — URL already exists):**
+```json
+{ "shortUrl": "http://localhost:3002/abc123", "message": "Done" }
 ```
 
-Without global `turbo`, use your package manager:
+---
 
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
+### `GET /:shortUrl`
+
+Redirects to the original long URL.
+
+- **302 Redirect** — on success
+- **411** — if the short URL is not found in the database
+
+---
+
+## Database Schema
+
+```prisma
+model Url {
+  id        String   @id @default(uuid())
+  longUrl   String
+  shortUrl  String   @unique
+  createAt  DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+---
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## Available Scripts
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Run from the **repo root** using `pnpm`:
 
-```sh
-turbo link
+| Command           | Description                              |
+|-------------------|------------------------------------------|
+| `pnpm dev`        | Start all apps in development mode       |
+| `pnpm build`      | Build all apps and packages              |
+| `pnpm lint`       | Lint all packages                        |
+| `pnpm check-types`| Type-check all packages                  |
+| `pnpm format`     | Format all `.ts`, `.tsx`, `.md` files with Prettier |
+
+Run a single app or package using Turborepo filters:
+
+```bash
+pnpm dev --filter=web
+pnpm dev --filter=http
+pnpm build --filter=@repo/db
 ```
 
-Without global `turbo`:
+---
 
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
+## How It Works
 
-## Useful Links
+1. The user pastes a long URL into the **Next.js** frontend and clicks **Generate Short URL**.
+2. The frontend sends a `POST /url` request to the **Express** backend.
+3. The backend validates the payload with **Zod**, checks if the URL already exists in **PostgreSQL**, and either returns the existing short code or generates a new 6-character **nanoid** slug.
+4. The short URL (e.g. `http://localhost:3002/xK9pQr`) is returned to the frontend and displayed.
+5. Visiting the short URL triggers a `GET /:shortUrl` request; the backend looks up the slug in the DB and issues a **redirect** to the original URL.
 
-Learn more about the power of Turborepo:
+---
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+## Project Decisions
+
+- **Deduplication:** If the same long URL is submitted twice, the existing short URL is returned rather than generating a duplicate slug.
+- **nanoid(6):** Generates a URL-safe, 6-character random slug (~68 billion possible combinations).
+- **Shared `@repo/db` package:** The Prisma client is instantiated once and exported from the `packages/db` workspace, keeping the backend thin and making it easy to add more apps that share the same DB client.
+- **Shared `@repo/common`:** The Zod schema for URL validation lives here so it could be reused across multiple backends or even on the frontend if needed.
