@@ -1,20 +1,21 @@
 "use client";
 import axios from "axios";
 import { useState } from "react";
-
-
-
-
+import { Bounce, toast, ToastContainer } from "react-toastify";
 export default function Home() {
   const [longUrlLink, setLongUrl] = useState("");
   const [short, setShortUrl] = useState("");
 
   const handleUrl = async () => {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/url`, {
-        longUrl: longUrlLink,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/url`,
+        {
+          longUrl: longUrlLink,
+        },
+      );
       if (response) {
+        toast("✅ Short URL generated successfully!");
         setShortUrl(response.data.shortUrl);
       }
     } catch (error) {
@@ -64,6 +65,19 @@ export default function Home() {
             <button className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg">
               Copy
             </button>
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              transition={Bounce}
+            />
           </div>
         </div>
       </div>
