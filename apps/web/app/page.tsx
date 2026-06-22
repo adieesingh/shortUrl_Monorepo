@@ -5,7 +5,7 @@ import { Bounce, toast, ToastContainer } from "react-toastify";
 export default function Home() {
   const [longUrlLink, setLongUrl] = useState("");
   const [short, setShortUrl] = useState("");
-
+	
   const handleUrl = async () => {
     try {
       const response = await axios.post(
@@ -15,8 +15,13 @@ export default function Home() {
         },
       );
       if (response) {
+<<<<<<< HEAD
         toast("✅ Short URL generated successfully!");
         setShortUrl(response.data.shortUrl);
+=======
+        setShortUrl(response.data.shortUrl)
+	alert("Url Genearted")
+>>>>>>> 378a094 (Update)
       }
     } catch (error) {
       console.log(error);
