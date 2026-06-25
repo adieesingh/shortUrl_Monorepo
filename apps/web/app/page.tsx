@@ -2,10 +2,17 @@
 import axios from "axios";
 import { useState } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import copy from "copy-text-to-clipboard";
 export default function Home() {
   const [longUrlLink, setLongUrl] = useState("");
   const [short, setShortUrl] = useState("");
-	
+
+  const copyButton = () => {
+    const copyClipboard = copy(short);
+    if (copyClipboard) {
+      toast.success("Copy to Clipboard");
+    }
+  };
   const handleUrl = async () => {
     try {
       const response = await axios.post(
@@ -15,13 +22,11 @@ export default function Home() {
         },
       );
       if (response) {
-<<<<<<< HEAD
         toast("✅ Short URL generated successfully!");
         setShortUrl(response.data.shortUrl);
-=======
-        setShortUrl(response.data.shortUrl)
-	alert("Url Genearted")
->>>>>>> 378a094 (Update)
+
+        setShortUrl(response.data.shortUrl);
+        alert("Url Genearted");
       }
     } catch (error) {
       console.log(error);
@@ -53,6 +58,19 @@ export default function Home() {
           >
             Generate Short URL
           </button>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce}
+          />
         </form>
 
         {/* Response Section */}
@@ -61,27 +79,29 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <input
-              readOnly
+            readOnly
               value={short}
-              placeholder="https://short.ly/abc123"
+              placeholder="https://backend.shorturl/abc123"
               className="flex-1 px-4 py-3 rounded-lg bg-slate-800 text-green-400 border border-slate-700"
             />
 
-            <button className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg">
+            <button
+              onClick={copyButton}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+            >
               Copy
             </button>
             <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
+              position="bottom-center"
+              autoClose={500}
+              hideProgressBar
               newestOnTop={false}
-              closeOnClick={false}
+              closeOnClick
               rtl={false}
               pauseOnFocusLoss
               draggable
               pauseOnHover
-              theme="light"
-              transition={Bounce}
+              theme="colored"
             />
           </div>
         </div>
