@@ -6,7 +6,9 @@ import dotenv from "dotenv"
 import cors from "cors"
 dotenv.config({path:"../.env"})
 const app = express();
-app.use(cors())
+app.use(cors({
+    origin:"https://shorturlgenerator.duckdns.org"
+}))
 app.use(express.json());
 const baseUrl =process.env.BACKEND_URL
 app.post("/url", async (req, res) => {
