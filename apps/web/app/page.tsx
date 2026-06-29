@@ -26,7 +26,7 @@ export default function Home() {
         setShortUrl(response.data.shortUrl);
 
         setShortUrl(response.data.shortUrl);
-        alert("Url Genearted");
+    
       }
     } catch (error) {
       console.log(error);
@@ -60,7 +60,7 @@ export default function Home() {
           </button>
           <ToastContainer
             position="top-right"
-            autoClose={5000}
+            autoClose={3000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick={false}
@@ -95,8 +95,8 @@ export default function Home() {
               position="bottom-center"
               autoClose={500}
               hideProgressBar
-              newestOnTop={false}
-              closeOnClick
+              newestOnTop={true}
+              closeOnClick={true}
               rtl={false}
               pauseOnFocusLoss
               draggable
