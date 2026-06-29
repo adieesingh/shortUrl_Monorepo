@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Home() {
   const [longUrlLink, setLongUrl] = useState("");
   const [short, setShortUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const copyButton = () => {
     if (!short) {
@@ -32,11 +33,12 @@ export default function Home() {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/url`,
         {
           longUrl: longUrlLink,
-        }
+        },
       );
 
       setShortUrl(response.data.shortUrl);
@@ -44,6 +46,8 @@ export default function Home() {
     } catch (error) {
       console.error(error);
       toast.error("Failed to generate short URL.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,9 +74,40 @@ export default function Home() {
           <button
             type="button"
             onClick={handleUrl}
-            className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700"
+            disabled={loading}
+            className={`w-full rounded-xl py-3 font-semibold text-white transition ${
+              loading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
+            }`}
           >
-            Generate Short URL
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <svg
+                  className="h-5 w-5 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
+                </svg>
+                Generating...
+              </div>
+            ) : (
+              "Generate Short URL"
+            )}
           </button>
         </div>
 

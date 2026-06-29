@@ -14,7 +14,7 @@ app.post("/url", async (req, res) => {
         const urlPayLoad = urlSchema.safeParse(req.body);
         if (!urlPayLoad.success) {
             return res.status(411).json({
-                message: "Data doesmt valid"
+                message: "Data doesnt valid"
             });
         }
         const shortParams = nanoid(6);
