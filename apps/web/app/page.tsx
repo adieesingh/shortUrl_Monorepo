@@ -1,110 +1,116 @@
 "use client";
+
 import axios from "axios";
+import copy from "copy-text-to-clipboard";
 import { useState } from "react";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import copy from "copy-text-to-clipboard";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function Home() {
   const [longUrlLink, setLongUrl] = useState("");
   const [short, setShortUrl] = useState("");
 
   const copyButton = () => {
-    const copyClipboard = copy(short);
-    if (copyClipboard) {
-      toast.success("Copy to Clipboard");
+    if (!short) {
+      toast.error("No URL to copy!");
+      return;
+    }
+
+    const copied = copy(short);
+
+    if (copied) {
+      toast.success("Copied to clipboard!");
+    } else {
+      toast.error("Failed to copy.");
     }
   };
+
   const handleUrl = async () => {
+    if (!longUrlLink.trim()) {
+      toast.error("Please enter a URL.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/url`,
         {
           longUrl: longUrlLink,
-        },
+        }
       );
-      if (response) {
-        toast("✅ Short URL generated successfully!");
-        setShortUrl(response.data.shortUrl);
 
-        setShortUrl(response.data.shortUrl);
-    
-      }
+      setShortUrl(response.data.shortUrl);
+      toast.success("Short URL generated successfully!");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to generate short URL.");
     }
   };
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-indigo-900 via-slate-900 to-black flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl">
-        <h1 className="text-4xl font-bold text-white text-center mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-100 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-2xl rounded-3xl border border-gray-200 bg-white shadow-2xl p-6 sm:p-8">
+        <h1 className="text-center text-3xl sm:text-4xl font-bold text-gray-900">
           URL Shortener
         </h1>
 
-        <p className="text-gray-300 text-center mb-8">
+        <p className="mt-2 mb-8 text-center text-gray-600">
           Convert long URLs into short, shareable links.
         </p>
 
-        <form className="space-y-4">
+        <div className="space-y-4">
           <input
             type="url"
-            placeholder="Paste your long URL here..."
-            className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={longUrlLink}
             onChange={(e) => setLongUrl(e.target.value)}
+            placeholder="Paste your long URL here..."
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
           />
 
           <button
             type="button"
-            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition duration-200"
             onClick={handleUrl}
+            className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700"
           >
             Generate Short URL
           </button>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-            transition={Bounce}
-          />
-        </form>
-
-        {/* Response Section */}
-        <div className="mt-8 p-5 rounded-xl bg-black/20 border border-white/10">
-          <h2 className="text-gray-300 mb-2">Your Short URL</h2>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-            readOnly
-              value={short}
-              placeholder="https://backend.shorturl/abc123"
-              className="flex-1 px-4 py-3 rounded-lg bg-slate-800 text-green-400 border border-slate-700"
-            />
-
-            <button
-              onClick={copyButton}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg"
-            >
-              Copy
-            </button>
-            <ToastContainer
-              position="bottom-center"
-              autoClose={500}
-              hideProgressBar
-              newestOnTop={true}
-              closeOnClick={true}
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="colored"
-            />
-          </div>
         </div>
+
+        {short && (
+          <div className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-5">
+            <h2 className="mb-3 text-lg font-semibold text-gray-700">
+              Your Short URL
+            </h2>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                readOnly
+                value={short}
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-indigo-600 font-medium"
+              />
+
+              <button
+                type="button"
+                onClick={copyButton}
+                className="rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition hover:bg-green-700"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
+
+        <ToastContainer
+          position="top-right"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="colored"
+          transition={Bounce}
+        />
       </div>
     </div>
   );
