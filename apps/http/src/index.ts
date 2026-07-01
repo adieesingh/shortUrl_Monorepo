@@ -7,7 +7,7 @@ import cors from "cors"
 dotenv.config({path:"../.env"})
 const app = express();
 app.use(cors({
-    origin:"https://shorturlgenerator.duckdns.org"
+    origin:process.env.URL
 }))
 app.use(express.json());
 const baseUrl =process.env.BACKEND_URL
@@ -19,10 +19,13 @@ app.post("/url", async (req, res) => {
                 message: "Data doesnt valid"
             });
         }
-        const shortParams = nanoid(6);
+        const shortParams =urlPayLoad.data.shortUrl ? urlPayLoad.data.shortUrl :nanoid(6);
+       
+        console.log(shortParams)
        const matchLongUrl = await prismaClient.url.findFirst({
         where:{
-            longUrl:urlPayLoad.data.longUrl
+            longUrl:urlPayLoad.data.longUrl,
+
         }
        })
        if(matchLongUrl){
@@ -45,6 +48,7 @@ app.post("/url", async (req, res) => {
             });
         }
         if (response) {
+            console.log(response.shortUrl)
             return res.status(200).json({
                 shortUrl: baseUrl+response.shortUrl,
                 message: "Done"

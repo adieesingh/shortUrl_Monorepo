@@ -1,31 +1,21 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
+// app/layout.jsx
+import "./globals.css"
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { ReactNode } from "react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
-export const metadata: Metadata = {
-  title: "Short Url Generate",
-  description: "A fast and reliable URL Shortener web application that converts long URLs into short",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }:{children:ReactNode}) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
-      </body>
+    <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,0 +1,16 @@
+FROM oven/bun:1
+
+WORKDIR /user/src/app
+
+COPY ../packages ../packages
+ENV DATABASE_URL=
+COPY ../turbo.json  ../turbo.json
+COPY ../apps/http  ../apps/http
+COPY ../package.json  ../package.json
+RUN bun install 
+ENV  DATABASE_URL=postgresql://neondb_owner:npg_hjW21FpoPJBg@ep-solitary-dawn-app5w4h9-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+RUN bun run db:generate
+
+EXPOSE 3001
+
+CMD [ "bun" ,"run","dev"]
