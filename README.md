@@ -48,7 +48,7 @@ shortUrl_Monorepo/
 ## Prerequisites
 
 - **Node.js** >= 18
-- **pnpm** 9.x — `npm install -g pnpm@9`
+- **pnpm** 9.x 
 - A running **PostgreSQL** instance
 
 ---
