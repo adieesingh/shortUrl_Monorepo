@@ -26,6 +26,6 @@ jobs:
               git pull origin main
               pnpm install
               pnpm run build
-              pm2 restart urlgenerator || pm2 start pnpm --name urlgenerator 
+              pm2 restart urlgenerator || pm2 start pnpm --name "urlgenerator" -- start
               sudo nginx -s reload
           
