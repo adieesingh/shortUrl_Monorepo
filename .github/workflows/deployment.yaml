@@ -21,11 +21,11 @@ jobs:
           username: ubuntu
           key: {{secrets.SSH_KEY }}
           script: |
-          cd /home/ubuntu/shortUrlGenerate/shortUrl_Monorepo
-          git fetch
-          git pull origin main
-          pnpm install
-          pnpm run build
-          pm2 restart urlgenerator || pm2 start pnpm --name urlgenerator 
-          sudo nginx -s reload
+              cd /home/ubuntu/shortUrlGenerate/shortUrl_Monorepo
+              git fetch
+              git pull origin main
+              pnpm install
+              pnpm run build
+              pm2 restart urlgenerator || pm2 start pnpm --name urlgenerator 
+              sudo nginx -s reload
           
