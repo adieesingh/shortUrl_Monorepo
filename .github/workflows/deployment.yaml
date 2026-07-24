@@ -17,9 +17,9 @@ jobs:
       - name: Deploy a VM
         uses: appleboy/ssh-action@v1.0.3
         with:
-          hosts: {{ secrets.SSH_HOST }}
+          hosts: ${{ secrets.SSH_HOST }}
           username: ubuntu
-          key: {{secrets.SSH_KEY }}
+          key: ${{secrets.SSH_KEY }}
           script: |
               cd /home/ubuntu/shortUrlGenerate/shortUrl_Monorepo
               git fetch
