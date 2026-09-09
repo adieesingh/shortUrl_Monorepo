@@ -41,7 +41,7 @@ app.post("/url", async (req, res) => {
                 shortUrl: shortParams
             }
         });
-        
+       
         if (!response) {
             return res.status(411).json({
                 message: "Data doesnt store"
@@ -56,6 +56,7 @@ app.post("/url", async (req, res) => {
         }
     }
     catch (error) {
+        console.log(error);
         return res.status(500).json({
             message: "Internal Server down",
             error:error
