@@ -75,9 +75,7 @@ export default function Home() {
 
       <div className="relative w-full max-w-xl rounded-2xl border border-white/10 bg-[#131826] shadow-2xl p-6 sm:p-10">
         <div className="mb-8 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-mono text-amber-400 tracking-wide">
-            $ shrink --url
-          </span>
+         
           <h1 className="mt-4 font-[family-name:var(--font-display)] text-3xl sm:text-4xl font-bold text-white tracking-tight">
             Turn long links short.
           </h1>
